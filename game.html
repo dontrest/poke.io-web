@@ -5,16 +5,88 @@
 		</title>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.7.1/pixi.min.js"></script>
-	</head>
-	<body>
-		<script>
-			var layer1;
-			var layer2;
-			var layer3;
-			var app = new PIXI.Application(800, 600, {backgroundColor : 0x1099bb});
-			document.body.appendChild(app.view);
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
+		<style>
+			body {
+				background-image: url('https://wallpapertag.com/wallpaper/full/7/c/e/517243-cool-pokemon-desktop-background-2560x1600.jpg');
+				background-size: cover;
+				background-repeat: no-repeat;
+				margin: 0;
+				display: flex;
 
-			app.stage.addChild(surface);	
+				/* This centers our sketch horizontally. */
+				justify-content: center;
+
+				/* This centers our sketch vertically. */
+				align-items: center;
+			}
+		</style>
+	</head>
+	<body onkeydown="keyDown">
+		<script>
+			function keyDown(event){
+				let key = event.key;
+				if (key == 'a') {
+					x+=16;
+				}
+				if (key == 's') {
+					y-=16;
+				}
+				if (key == 'w') {
+					y+=16;
+				}
+				if (key == 'd') {
+					x-=16;
+				}
+				if (key == '+') {
+					game_scale+=0.25;
+				}
+				if (key == '-') {
+					game_scale-=0.25;
+				}
+			}
+			var game_scale=2;
+			var x=0;
+			var y=0;
+			const socket = io('http://localhost:9999/');
+			var game_scene;
+			socket.on('update_world' , data=>{
+				game_scene = data;
+			})
+			document.onkeydown = keyDown;
+			
+			var canvas;
+			function setup() {
+				canvas = createCanvas(1280, 720 ).elt;
+				img = loadImage("sprite/testmap.png");  // Load the image
+				pokemon = [loadImage("sprite/010_0.png"),loadImage("sprite/010_1.png")] ;
+			}
+			function draw() {
+				clear();
+				background(0);
+				// Displays the image at its actual size at point (0,0)		
+				scale(game_scale);
+				image(img, x, y);
+				if(game_scene){
+					for(let en_index =0; en_index < game_scene.enemy.length ; en_index++){
+						push();
+						let en = game_scene.enemy[en_index];
+						image(pokemon[en.direction],x+ en.x*16,y + en.y*16);				
+						pop();
+					}			
+				}
+			}
+			function gotoFullScreen(elem){
+				if (elem.requestFullscreen) {
+					elem.requestFullscreen();
+				} else if (elem.mozRequestFullScreen) { /* Firefox */
+					elem.mozRequestFullScreen();
+				} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+					elem.webkitRequestFullscreen();
+				} else if (elem.msRequestFullscreen) { /* IE/Edge */
+					elem.msRequestFullscreen();
+				}
+			}
 		</script>
 	</body>
 </html>
