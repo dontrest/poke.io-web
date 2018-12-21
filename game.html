@@ -1,5 +1,9 @@
 <html>
 	<head>
+		<meta 
+			name='viewport' 
+			content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' 
+	   />
 		<title>
 			Game
 		</title>
@@ -57,9 +61,19 @@
 			
 			var canvas;
 			function setup() {
-				canvas = createCanvas(1280, 720 ).elt;
+				canvas = createCanvas(800, 600 ).elt;
+				// disable basic web browser touch action [etc. zoom in , zoom out]
+				canvas.style.touchAction = "none";
+				canvas.addEventListener("touchstart", handleStart, false);
+				// el.addEventListener("pointerup", handleEnd, false);
+				// el.addEventListener("pointercancel", handleCancel, false);
+				// el.addEventListener("pointermove", handleMove, false);
 				img = loadImage("sprite/testmap.png");  // Load the image
 				pokemon = [loadImage("sprite/010_0.png"),loadImage("sprite/010_1.png")] ;
+			}
+
+			function handleStart(e) {
+				console.log(e);
 			}
 			function draw() {
 				clear();
